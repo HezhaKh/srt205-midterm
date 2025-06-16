@@ -4,8 +4,7 @@
   become: yes
   vars:
     web_root: /var/www/midterm
-    github_username:  hkhoshnoud_seneca
-    # username: ansible_user
+    github_username: hkhoshnoud_seneca
 
   tasks:
 
@@ -64,8 +63,7 @@
           debug:
             msg: "Something is wrong with web app deployment."
 
-    
-    # to add the website as the default for nginx    
+        # Update Nginx default site config
         - name: Update Nginx default site config
           lineinfile:
             path: /etc/nginx/sites-available/default
@@ -74,14 +72,6 @@
             state: present
             backup: yes
           notify: Restart Nginx
-
-    - name: Update Nginx default site config
-      lineinfile:
-        path: /etc/nginx/sites-available/default
-        regexp: 'root\s+.*;'
-        line: "root {{ web_root }};"
-        backup: yes
-      notify: Restart Nginx
 
   handlers:
     - name: Restart Nginx
