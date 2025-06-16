@@ -64,6 +64,17 @@
           debug:
             msg: "Something is wrong with web app deployment."
 
+    
+    # to add the website as the default for nginx    
+        - name: Update Nginx default site config
+          lineinfile:
+            path: /etc/nginx/sites-available/default
+            regexp: '^\s*root\s+.*;'
+            line: "    root {{ web_root }};"
+            state: present
+            backup: yes
+          notify: Restart Nginx
+
     - name: Update Nginx default site config
       lineinfile:
         path: /etc/nginx/sites-available/default

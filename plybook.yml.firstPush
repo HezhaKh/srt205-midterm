@@ -63,7 +63,7 @@
         - name: Error during web app deployment
           debug:
             msg: "Something is wrong with web app deployment."
-
+            
     - name: Update Nginx default site config
       lineinfile:
         path: /etc/nginx/sites-available/default
