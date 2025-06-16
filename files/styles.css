@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: #121212;
+  color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: rgba(20, 20, 20, 0.85);
+  padding: 40px;
+  border: 2px solid #00ffe0;
+  border-radius: 20px;
+  text-align: center;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 0 20px #00ffe0, 0 0 40px #00ffe0 inset;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #00ffe0;
+  text-shadow: 0 0 10px #00ffe0;
+}
+
+p {
+  font-size: 1.2em;
+  margin: 10px 0;
+  color: #cccccc;
+}
+
+#clock {
+  font-size: 2em;
+  font-weight: bold;
+  color: #ff4081;
+  text-shadow: 0 0 10px #ff4081;
+  margin-top: 20px;
+}

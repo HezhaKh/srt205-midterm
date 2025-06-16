@@ -1,0 +1,79 @@
+---
+- name: Configure Web Server on MidtermNode01
+  hosts: WebServers
+  become: yes
+  vars:
+    web_root: /var/www/midterm
+    github_username:  hkhoshnoud_seneca
+    # username: ansible_user
+
+  tasks:
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Create web root directory
+      file:
+        path: "{{ web_root }}"
+        state: directory
+        mode: '0755'
+        owner: www-data
+        group: www-data
+
+    - name: Web app deployment block
+      block:
+
+        - name: Copy web files to web root
+          copy:
+            src: "/home/hkhoshnoud/srt205/repo/srt205-midterm/files/{{ item }}"
+            dest: "{{ web_root }}/{{ item }}"
+          loop:
+            - index.html
+            - script.js
+            - styles.css
+          notify: Restart Nginx
+
+        - name: Check if index.html exists in web_root
+          stat:
+            path: "{{ web_root }}/index.html"
+          register: check_index_result
+
+        - name: Replace placeholders in index.html
+          replace:
+            path: "{{ web_root }}/index.html"
+            regexp: "{{ item.regex }}"
+            replace: "{{ item.replace }}"
+          loop:
+            - { regex: 'OS_PLACEHOLDER', replace: '{{ ansible_distribution }}' }
+            - { regex: 'DATETIME_PLACEHOLDER', replace: '{{ ansible_facts.date_time.iso8601 }}' }
+            - { regex: 'NAME_PLACEHOLDER', replace: '{{ github_username }}' }
+          when: check_index_result.stat.exists | default(false) | bool
+          notify: Restart Nginx
+
+      rescue:
+        - name: Error during web app deployment
+          debug:
+            msg: "Something is wrong with web app deployment."
+
+    - name: Update Nginx default site config
+      lineinfile:
+        path: /etc/nginx/sites-available/default
+        regexp: 'root\s+.*;'
+        line: "root {{ web_root }};"
+        backup: yes
+      notify: Restart Nginx
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
